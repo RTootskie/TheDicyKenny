@@ -1,6 +1,7 @@
 import os
 import random
 import discord
+import d20
 from replit import db
 from discord.ext import commands
 import logging
@@ -25,58 +26,17 @@ async def on_ready():
     print('------')
 
 @bot.command()
-async def r(ctx, dice: str, *opt):
-    """Rolls a dice in (N)dN format."""
-    params = dice.split('d')
-    rolls = None
-    roll_and_sub = params[1].split('-')
-    roll_and_add = params[1].split('+')
+async def r(ctx, input: str, *opt):
+  """Rolls a dice in (N)dN format."""
+  result = d20.roll(input)
+  formatted = str(result).replace("`","")
 
-    total = 0
-    dice_total = 0
-    is_modifier = None
-    result = []
-
-    if len(str(params[0])) > 0:
-      rolls = int(params[0])
-
-    if '+' in roll_and_sub[0]:
-      limit = int(roll_and_add[0])
-    else:
-      limit = int(roll_and_sub[0])
-
-    split_modifiers = dice.split(str(limit))
-    modifiers = split_modifiers[1]
-
-    if not rolls:
-        result.append(random.randint(1, limit))
-    else:
-      for r in range(rolls):
-          result.append(random.randint(1, limit))
-
-    if len(str(limit)) == len(str(params[1])):
-        is_modifier = False
-    else:
-        is_modifier = True
-
-    for i in result:
-        dice_total += i
-
-    if is_modifier:
-        total += dice_total+(eval(modifiers))
-    else:
-        total = dice_total
-
-    if rolls:
-      await ctx.send(ctx.message.author.mention+"\n"+f"**Rolled:** {rolls}d{limit}={result} ({dice_total}) {modifiers}\n**Total:** {total}")
-    else:
-      if limit == 100:
-        if result[0] > 95 or result[0] < 5:
-          await ctx.send(ctx.message.author.mention+"\n"+f"**Rolled:** __1d{limit}=**{result}**__ {modifiers}\n**Total:** {total}")
-        else:
-          await ctx.send(ctx.message.author.mention+"\n"+f"**Rolled:** 1d{limit}={result} {modifiers}\n**Total:** {total}")
-      else:
-          await ctx.send(ctx.message.author.mention+"\n"+f"**Rolled:** 1d{limit}={result} {modifiers}\n**Total:** {total}")
+  dice_split = str(result).split("d")
+  dice_nr = int(dice_split[1].split(" (")[0])
+  if dice_nr == 100:
+    await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {formatted}")
+  else:
+    await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {formatted}")
 
 @bot.command()
 async def rr(ctx, time: int, dice: str, *opt):

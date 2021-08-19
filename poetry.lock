@@ -40,6 +40,14 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins"]
 
 [[package]]
+name = "cachetools"
+version = "4.2.2"
+description = "Extensible memoizing collections and decorators"
+category = "main"
+optional = false
+python-versions = "~=3.5"
+
+[[package]]
 name = "certifi"
 version = "2021.5.30"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -84,6 +92,18 @@ description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
+name = "d20"
+version = "1.1.2"
+description = "A formal grammar-based dice parser and roller for D&D and other dice systems."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+cachetools = ">=3.1.0"
+lark-parser = ">=0.9.0,<0.10.0"
 
 [[package]]
 name = "discord"
@@ -158,6 +178,17 @@ MarkupSafe = ">=2.0"
 
 [package.extras]
 i18n = ["Babel (>=2.7)"]
+
+[[package]]
+name = "lark-parser"
+version = "0.9.0"
+description = "a modern parsing library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+regex = ["regex"]
 
 [[package]]
 name = "markupsafe"
@@ -255,7 +286,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "07409748d7f030a272db9a054dffe59a80e864364136fa52ec5e49f16b03ec79"
+content-hash = "e9d0d31cbfcbe469dde1bf9437296c715d7f5d25cb6a5cb301b8248a10c13169"
 
 [metadata.files]
 aiohttp = [
@@ -305,6 +336,10 @@ attrs = [
     {file = "attrs-21.2.0-py2.py3-none-any.whl", hash = "sha256:149e90d6d8ac20db7a955ad60cf0e6881a3f20d37096140088356da6c716b0b1"},
     {file = "attrs-21.2.0.tar.gz", hash = "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"},
 ]
+cachetools = [
+    {file = "cachetools-4.2.2-py3-none-any.whl", hash = "sha256:2cc0b89715337ab6dbba85b5b50effe2b0c74e035d83ee8ed637cf52f12ae001"},
+    {file = "cachetools-4.2.2.tar.gz", hash = "sha256:61b5ed1e22a0924aed1d23b478f37e8d52549ff8a961de2909c69bf950020cff"},
+]
 certifi = [
     {file = "certifi-2021.5.30-py2.py3-none-any.whl", hash = "sha256:50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"},
     {file = "certifi-2021.5.30.tar.gz", hash = "sha256:2bbf76fd432960138b3ef6dda3dde0544f27cbf8546c458e60baf371917ba9ee"},
@@ -324,6 +359,10 @@ click = [
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+]
+d20 = [
+    {file = "d20-1.1.2-py3-none-any.whl", hash = "sha256:1195bfc643aa4bd984bf6d26327491795272bfab8b19ac15108b4352a9de3166"},
+    {file = "d20-1.1.2.tar.gz", hash = "sha256:53bc0ac375deeb84bcbb736ef5b3a72656a265732720fa3e5548dd5b38cb20f5"},
 ]
 discord = [
     {file = "discord-1.7.3-py3-none-any.whl", hash = "sha256:248d728356e149c818a81b94659047a19305ea1623d4810bbb342f6b7df55f36"},
@@ -348,6 +387,9 @@ itsdangerous = [
 jinja2 = [
     {file = "Jinja2-3.0.1-py3-none-any.whl", hash = "sha256:1f06f2da51e7b56b8f238affdd6b4e2c61e39598a378cc49345bc1bd42a978a4"},
     {file = "Jinja2-3.0.1.tar.gz", hash = "sha256:703f484b47a6af502e743c9122595cc812b0271f661722403114f71a79d0f5a4"},
+]
+lark-parser = [
+    {file = "lark-parser-0.9.0.tar.gz", hash = "sha256:9e7589365d6b6de1cca40b0eaec31104a3fb96a37a11a9dfd5098e95b50aa6cd"},
 ]
 markupsafe = [
     {file = "MarkupSafe-2.0.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:d8446c54dc28c01e5a2dbac5a25f071f6653e6e40f3a8818e8b45d790fe6ef53"},
