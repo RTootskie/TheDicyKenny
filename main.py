@@ -4,21 +4,13 @@ import discord
 import d20
 from replit import db
 from discord.ext import commands
-import logging
 
-##### LOGGING ########
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
-##### LOGGING ########
 description = '''A Kenny that handles all your dice needs.'''
 
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix='!', description=description, intents=intents)
+bot = commands.Bot(command_prefix='*', description=description, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -27,7 +19,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you begging for luck"))
 
 @bot.command()
-async def r(ctx, input: str, *opt):
+async def r(ctx, input: str, opt="normal"):
   """Rolls a dice in (N)dN format."""
   result = d20.roll(input)
   formatted = str(result).replace("`","")
@@ -62,13 +54,13 @@ async def r(ctx, input: str, *opt):
         else:
             brackets += f"{i}"
     brackets += ")"
-    await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {dice_amt}d{dice_nr} {brackets} {modifiers}\n**Total: {result.total}")
+    await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {dice_amt}d{dice_nr} {brackets} {modifiers}\n**Total:** {result.total}")
   else:
     formatted = formatted.replace(" = ","\n**Total:** ")
     await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {formatted}")
 
 @bot.command()
-async def rr(ctx, time: int, dice: str, *opt):
+async def rr(ctx, time: int, dice: str, opt="normal"):
   send_message = f"Rolling {time} times"
   count = int(time)
   total_roll = 0
