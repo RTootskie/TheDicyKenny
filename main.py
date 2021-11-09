@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix='*', description=description, intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you begging for luck"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="James be an absolute hero! <3"))
 
 @bot.command()
 async def r(ctx, input: str, opt="normal"):
