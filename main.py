@@ -1,13 +1,21 @@
 import os
 import d20
 import discord
+import logging
 
 from random import choice, randint
 from replit import db
 from discord.ext import commands, tasks
 from itertools import cycle
+# Custom imports
+from resources.players import players
+from resources.dice_functions import rolling_dice, dice_bot_logic, calculate_modifiers
 
-from dice_functions import rolling_dice, dice_bot_logic, calculate_modifiers
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 description = '''A Kenny that handles all your dice needs.'''
 
@@ -62,28 +70,27 @@ async def on_ready():
 async def r(ctx, input: str):
   """Rolls a dice in (N)dN format."""
   results_from_logic = dice_bot_logic(input)
-
-  # This line is used to initialize the database in a given server
-  # db[f"{ctx.guild.id}_dice_hundred_rolls"] = {
-  #   "total_rolls": 0,
-  #   "high_ended_rolls": 0,
-  #   "low_ended_rolls": 0,
-  # }
+  logger.debug(db[f"{ctx.guild.id}_dice_hundred_rolls"])
 
   if results_from_logic["dice_size"] == 100:
-    # Seperation for readability
+
     db[f"{ctx.guild.id}_dice_hundred_rolls"]["total_rolls"] += 1
-    # Seperation for readability
+    if ctx.message.author.name in players:
+      db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
+
     brackets = "("
     for dice_roll in results_from_logic["dice_results"]:
-      # Seperation for readability
-      # Seperation for readability
+
       if dice_roll > 95:
         db[f"{ctx.guild.id}_dice_hundred_rolls"]["high_ended_rolls"] += 1
+        if ctx.message.author.name in players:
+          db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
       elif dice_roll < 6:
         db[f"{ctx.guild.id}_dice_hundred_rolls"]["low_ended_rolls"] += 1
-      # Seperation for readability
-      # Seperation for readability
+        if ctx.message.author.name in players:
+          db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
+
+
       if int(dice_roll) >= 96 or int(dice_roll) <= 5:
         if len(results_from_logic["dice_results"]) > 1:
             brackets += f"**{dice_roll}**, "
