@@ -1,4 +1,13 @@
 from random import randint
+import logging
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+
+# Necessary for initialization of database key
 
 def calculate_modifiers(modifiers: list):
     modifier_total = 0
@@ -15,31 +24,32 @@ def calculate_modifiers(modifiers: list):
                         try:
                             modifier_total -= int(negativeModifier)
                         except ValueError:
-                            print("You wrote something wrong, recheck my result.")
+                            logger.warning("You wrote something wrong, recheck my result.")
                 continue  # Restart the loop so you don't error
             try:
                 modifier_total += int(bonusModifier)
             except ValueError:
-                print("You wrote something wrong, recheck my result.")
+                logger.warning("You wrote something wrong, recheck my result.")
     return modifier_total
 
 def rolling_dice(size_of_dice, times_to_roll=1):
     """Insert the amount of times you need to roll a certain dice"""
     dice_roller_results = []
     while times_to_roll > 0:
-        dice_roller_results.append(randint(1, size_of_dice))
-        times_to_roll -= 1
+      dice_roll = randint(1, size_of_dice)
+      dice_roller_results.append(dice_roll)
+      times_to_roll -= 1
     return dice_roller_results
 
 def dice_bot_logic(user_string: str):
     """Roll your dice with the syntax of [num_dice]d[dice_sides][modifiers]"""
-    print(f"The person just input: {user_string}")
+    logger.info(f"The person just input: {user_string}")
     # Has the user inserted correct syntax
 
     if 'd' in user_string:
         # Establish initial split of dice
         split_dice = user_string.split("d")
-        print(split_dice)
+        logger.info(split_dice)
         dice_size_and_modifiers = split_dice[1]
 
         # Declare some values that are used for checks if they are filled
@@ -84,43 +94,43 @@ def dice_bot_logic(user_string: str):
             dice_modifiers_string = str(first_modifier + dice_size_amt_split[1])
             loop_modifiers = dice_modifiers_string.split("+")
             total_modifier_sum = calculate_modifiers(loop_modifiers)
-            print(f"Total Bonus: {total_modifier_sum}")  # Good for logging
+            logger.debug(f"Total Bonus: {total_modifier_sum}")  # Good for logging
             # capabilities
         else:
             dice_size = int(split_dice[1])
 
         if dice_num:  # If dice_num exists
-            print(dice_num)
+            logger.debug(dice_num)
             rolled_results = rolling_dice(dice_size, dice_num)
-            print(rolled_results)
+            logger.debug(rolled_results)
             roll_total = 0
             for i in rolled_results:
-                print(f"Rolled {i}")
+                logger.debug(f"Rolled {i}")
                 roll_total += i
             if first_modifier:
                 roll_total += total_modifier_sum
         else:
             rolled_results = rolling_dice(dice_size)
-            print(rolled_results)
+            logger.debug(rolled_results)
             roll_total = 0
             for i in rolled_results:
-                print(f"Rolled {i}")
-                roll_total += i
+              logger.debug(f"Rolled {i}")
+              roll_total += i
             if first_modifier:
-                roll_total += total_modifier_sum
+              roll_total += total_modifier_sum
 
         if pre_modifier:
             if should_take_away:
                 roll_total = pre_modifier - roll_total
             else:
                 roll_total += pre_modifier
-            print(f"You rolled a total of: {roll_total}")
+            logger.info(f"You rolled a total of: {roll_total}")
         else:
-            print(f"You rolled a total of: {roll_total}")
+            logger.info(f"You rolled a total of: {roll_total}")
 
         if not dice_num:
           dice_num = 1
-        
+
         program_returns = {
             "pre_modifier": pre_modifier,
             "negative_pre": should_take_away,
@@ -134,4 +144,4 @@ def dice_bot_logic(user_string: str):
 
         return program_returns
     else:
-        print("You didn't put a D")
+        logger.warning("You didn't put a D")
