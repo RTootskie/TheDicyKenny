@@ -66,7 +66,7 @@ async def on_ready():
 #!! * Bring over the functionality of the dicebot to the iteration
 #!! * Create a new functionality for the dice logic to roll an iteration and add bonuses to each rolls
 
-@bot.command()
+@bot.command(aliases=["R"])
 async def r(ctx, input: str):
   """Rolls a dice in (N)dN format."""
   results_from_logic = dice_bot_logic(input)
@@ -129,6 +129,8 @@ async def rr(ctx, time: int, dice: str, opt="normal"):
 
       if int(dice_nr) == 100:
           db[f"{ctx.guild.id}_dice_hundred_rolls"]["total_rolls"] += 1
+          if ctx.message.author.name in players:
+            db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
           diceresult_left_side = formatted.split(" (")[1]
           diceresult_right_side = diceresult_left_side.split(") ")[0]
           check_modifier = dice.split(dice_nr)
@@ -139,24 +141,28 @@ async def rr(ctx, time: int, dice: str, opt="normal"):
           diceresults = diceresult_right_side.split(", ")
           brackets = "("
           counter = 0
-          for i in diceresults:
+          for dice_roll in diceresults:
               counter += 1
-              i = i.replace("*","")
-              if int(i) >= 96 or int(i) <= 5:
-                if int(i) > 95:
+              dice_roll = dice_roll.replace("*","")
+              if int(dice_roll) >= 96 or int(dice_roll) <= 5:
+                if int(dice_roll) > 95:
                   db[f"{ctx.guild.id}_dice_hundred_rolls"]["high_ended_rolls"] += 1
-                elif int(i) < 6:
+                  if ctx.message.author.name in players:
+                    db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
+                elif int(dice_roll) < 6:
                   db[f"{ctx.guild.id}_dice_hundred_rolls"]["low_ended_rolls"] += 1
+                  if ctx.message.author.name in players:
+                    db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
                 # Seperation for readability
                 if len(diceresults) > 1 and counter != len(diceresults):
-                    brackets += f"**{i}**, "
+                    brackets += f"**{dice_roll}**, "
                 else:
-                    brackets += f"**{i}**"
+                    brackets += f"**{dice_roll}**"
               else:
                 if len(diceresults) > 1 and counter != len(diceresults):
-                    brackets += f"{i}, "
+                    brackets += f"{dice_roll}, "
                 else:
-                    brackets += f"{i}"
+                    brackets += f"{dice_roll}"
           brackets += ")"
           send_message += f"\n1d{dice_nr} {brackets} {modifiers} = {result.total}"
       else:

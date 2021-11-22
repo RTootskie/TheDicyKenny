@@ -21,6 +21,5 @@ main_game = [
   "Gnasher",
   "KennyJohn",
   "Sancronis",
-  "Saint Chicek",
   "Vidavian"
 ]
