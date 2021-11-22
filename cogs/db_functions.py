@@ -1,6 +1,6 @@
 from discord.ext import commands
 from replit import db
-from resources.players import main_game
+from resources.players import main_game, players
 
 class DiceData(commands.Cog):
     def __init__(self, bot):
@@ -10,29 +10,34 @@ class DiceData(commands.Cog):
     async def on_ready(self):
       print("Cog database loaded")
 
-    @commands.command(aliases=["listresults","dicerolls","rollings"])
-    async def _data(self, ctx):
-      """Gives you an overview of the dicerolls inside the database. Usage: *dicerolls """
+    @commands.command(aliases=["STATS","stats", "statistics"])
+    async def _statistics(self, ctx, target="None"):
+      """Gives you an overview of the dicerolls inside the database. Usage: *statistics [None,All,Specific Player] Will need to use Discord name. None- Global results, All- Global and Players, Specifc Player - Only the player's results"""
       total_rolls = db[f"{ctx.guild.id}_dice_hundred_rolls"]["total_rolls"]
       high_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["high_ended_rolls"]
       low_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["high_ended_rolls"]
 
-      message = f"You have all rolled a total of **{total_rolls}** D100s.\nYou have all rolled a total of **{high_ended}** high open enders.\nYou have all rolled a total of **{low_ended}** low open enders.\n"
+      if target == "None":
+        message = f"You have all rolled a total of **{total_rolls}** D100s.\nYou have all rolled a total of **{high_ended}** high open enders.\nYou have all rolled a total of **{low_ended}** low open enders.\n"
+      elif target == "All" or target == "all":
+        message = f"You have all rolled a total of **{total_rolls}** D100s.\nYou have all rolled a total of **{high_ended}** high open enders.\nYou have all rolled a total of **{low_ended}** low open enders.\n"
+        for name in main_game:
+          player_total_rolls = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][name]["total_rolls"]
+          player_high_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][name]["high_ended_rolls"]
+          player_low_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][name]["low_ended_rolls"]
 
-      await ctx.send(ctx.message.author.mention +f"\n{message}")
+          message += f"\t**{name}**:\n"
+          message += f"\t\t*Total rolls*: {player_total_rolls}\n\t\t*High rolls*: {player_high_ended}\n\t\t*Low rolls*: {player_low_ended}\n"
+      else:
+        if target in players:
+          player_total_rolls = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][target]["total_rolls"]
+          player_high_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][target]["high_ended_rolls"]
+          player_low_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][target]["low_ended_rolls"]
 
-
-    @commands.command(aliases=["playerresults","playerrolls"])
-    async def _playerdata(self, ctx):
-      """Gives you an overview of the dicerolls inside the database. Usage: *dicerolls """
-      message = "*Player summary*:\n"
-      for name in main_game:
-        player_total_rolls = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][name]["total_rolls"]
-        player_high_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][name]["high_ended_rolls"]
-        player_low_ended = db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][name]["low_ended_rolls"]
-        
-        message += f"\t**{name}**:\n"
-        message += f"\t\t*Total rolls*: {player_total_rolls}\n\t\t*High rolls*: {player_high_ended}\n\t\t*Low rolls*: {player_low_ended}\n"
+          message = f"\t**{target}**:\n"
+          message += f"\t\t*Total rolls*: {player_total_rolls}\n\t\t*High rolls*: {player_high_ended}\n\t\t*Low rolls*: {player_low_ended}\n"
+        else:
+          message = "That player does not exist in our database."
 
       await ctx.send(ctx.message.author.mention +f"\n{message}")
 
