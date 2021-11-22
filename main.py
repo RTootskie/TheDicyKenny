@@ -3,13 +3,14 @@ import d20
 import discord
 import logging
 
-from random import choice, randint
 from replit import db
-from discord.ext import commands, tasks
-from itertools import cycle
+from discord.ext import commands
+#from random import choice, randint
+#from itertools import cycle
+
 # Custom imports
 from resources.players import players
-from resources.dice_functions import rolling_dice, dice_bot_logic, calculate_modifiers
+from resources.dice_functions import dice_bot_logic
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
