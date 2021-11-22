@@ -1,14 +1,14 @@
 # Commented lines of redundant code to review back on
 # This line is used to initialize the database in a given server
-# db[f"{ctx.guild.id}_dice_hundred_rolls"] = {
-#   "total_rolls": 0,
-#   "high_ended_rolls": 0,
-#   "low_ended_rolls": 0,
-#   "players": {
-#     "test_player": {
-#       "total_rolls": 0,
-#       "high_ended_rolls": 0,
-#       "low_ended_rolls": 0,
+# db[f"{ctx.guild.id}_dice_rolls"] = {
+# "total_rolls": 0,
+# "max_rolls": 0,
+# "min_rolls": 0,
+# "players": {
+#   "test_player": {
+#     "total_rolls": 0,
+#     "high_ended_rolls": 0,
+#     "low_ended_rolls": 0,
 #     }
 #   }
 # }
