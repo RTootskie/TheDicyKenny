@@ -67,36 +67,58 @@ async def on_ready():
 #!! * Bring over the functionality of the dicebot to the iteration
 #!! * Create a new functionality for the dice logic to roll an iteration and add bonuses to each rolls
 
+def add_total_rolls_to_database(dice_database_to_add, playername, d100_database_to_add=None):
+  """Using the parameters add the diceroll to the correct database and under the correct player"""
+  dice_database_to_add["total_rolls"] += 1
+  if playername in players:
+    dice_database_to_add["players"][playername]["total_rolls"] += 1
+  if d100_database_to_add:
+    d100_database_to_add["total_rolls"] += 1
+    if playername in players:
+      d100_database_to_add["players"][playername]["total_rolls"] += 1
+
+def add_d100_highlow_rolls_to_database(dice_database_to_add, diceroll, playername, d100_database_to_add=None):
+  """Using parameters add the currently performed dice roll to the correct database and under the correct player"""
+  if diceroll > 95:
+    dice_database_to_add["max_rolls"] += 1
+    if playername in players:
+      dice_database_to_add["players"][playername]["high_ended_rolls"] += 1
+  elif diceroll < 6:
+    dice_database_to_add["min_rolls"] += 1
+    if playername in players:
+      dice_database_to_add["players"][playername]["low_ended_rolls"] += 1
+  if d100_database_to_add:
+    if diceroll > 95:
+      d100_database_to_add["high_ended_rolls"] += 1
+    if playername in players:
+      d100_database_to_add["players"][playername]["high_ended_rolls"] += 1
+    elif diceroll < 6:
+      d100_database_to_add["low_ended_rolls"] += 1
+      if playername in players:
+        d100_database_to_add["players"][playername]["low_ended_rolls"] += 1
+
+def add_highlow_rolls_to_database(dice_database_to_add, diceroll, dicesize, playername):
+  """Using parameters add the currently performed dice roll to the correct database and under the correct player"""
+  if min(1, dicesize) == diceroll:
+    dice_database_to_add["max_rolls"] += 1
+    if playername in players:
+      dice_database_to_add["players"][playername]["high_ended_rolls"] += 1
+  elif max(1, dicesize) == diceroll:
+    dice_database_to_add["min_rolls"] += 1
+    if playername in players:
+      dice_database_to_add["players"][playername]["low_ended_rolls"] += 1
+    
+
 @bot.command(aliases=["R"])
 async def r(ctx, input: str):
   """Rolls a dice in (N)dN format."""
   results_from_logic = dice_bot_logic(input)
   logger.debug(db[f"{ctx.guild.id}_dice_hundred_rolls"])
-
   if results_from_logic["dice_size"] == 100:
-    db[f"{ctx.guild.id}_dice_hundred_rolls"]["total_rolls"] += 1
-    db[f"{ctx.guild.id}_dice_rolls"]["total_rolls"] += 1
-    if ctx.message.author.name in players:
-      db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
-      db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
-
+    add_total_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], ctx.message.author.name, db[f"{ctx.guild.id}_dice_hundred_rolls"])
     brackets = "("
     for dice_roll in results_from_logic["dice_results"]:
-
-      if dice_roll > 95:
-        db[f"{ctx.guild.id}_dice_hundred_rolls"]["high_ended_rolls"] += 1
-        db[f"{ctx.guild.id}_dice_rolls"]["max_rolls"] += 1
-        if ctx.message.author.name in players:
-          db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
-          db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
-      elif dice_roll < 6:
-        db[f"{ctx.guild.id}_dice_hundred_rolls"]["low_ended_rolls"] += 1
-        db[f"{ctx.guild.id}_dice_rolls"]["min_rolls"] += 1
-        if ctx.message.author.name in players:
-          db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
-          db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
-
-
+      add_d100_highlow_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], dice_roll, ctx.message.author.name, db[f"{ctx.guild.id}_dice_hundred_rolls"])
       if int(dice_roll) >= 96 or int(dice_roll) <= 5:
         if len(results_from_logic["dice_results"]) > 1:
             brackets += f"**{dice_roll}**, "
@@ -114,19 +136,8 @@ async def r(ctx, input: str):
       await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} {brackets}\n**Total:** {results_from_logic['roll_total']}")
   else:
     for dice_roll in results_from_logic["dice_results"]:
-      if min(1, results_from_logic["dice_size"]) == dice_roll:
-        db[f"{ctx.guild.id}_dice_rolls"]["min_rolls"] += 1
-        if ctx.message.author.name in players:
-          db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
-      elif max(1, results_from_logic["dice_size"]) == dice_roll:
-        db[f"{ctx.guild.id}_dice_rolls"]["max_rolls"] += 1
-        if ctx.message.author.name in players:
-          db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
-      else:
-        db[f"{ctx.guild.id}_dice_rolls"]["total_rolls"] += 1
-        if ctx.message.author.name in players:
-          db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
-
+      add_highlow_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], dice_roll, results_from_logic["dice_size"], ctx.message.author.name)
+      add_total_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], ctx.message.author.name)
     if results_from_logic["modifiers"]:
       await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} {results_from_logic['dice_results']} {results_from_logic['modifiers']}\n**Total:** {results_from_logic['roll_total']}")
     else:
@@ -149,11 +160,7 @@ async def rr(ctx, time: int, dice: str, opt="normal"):
       dice_nr = str(dice_split[1]).split(" (")[0]
 
       if int(dice_nr) == 100:
-          db[f"{ctx.guild.id}_dice_hundred_rolls"]["total_rolls"] += 1
-          db[f"{ctx.guild.id}_dice_rolls"]["total_rolls"] += 1
-          if ctx.message.author.name in players:
-            db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
-            db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
+          add_total_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], ctx.message.author.name, db[f"{ctx.guild.id}_dice_hundred_rolls"])
           diceresult_left_side = formatted.split(" (")[1]
           diceresult_right_side = diceresult_left_side.split(") ")[0]
           check_modifier = dice.split(dice_nr)
@@ -168,19 +175,7 @@ async def rr(ctx, time: int, dice: str, opt="normal"):
               counter += 1
               dice_roll = dice_roll.replace("*","")
               if int(dice_roll) >= 96 or int(dice_roll) <= 5:
-                if int(dice_roll) > 95:
-                  db[f"{ctx.guild.id}_dice_hundred_rolls"]["high_ended_rolls"] += 1
-                  db[f"{ctx.guild.id}_dice_rolls"]["max_rolls"] += 1
-                  if ctx.message.author.name in players:
-                    db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
-                    db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
-                elif int(dice_roll) < 6:
-                  db[f"{ctx.guild.id}_dice_hundred_rolls"]["low_ended_rolls"] += 1
-                  db[f"{ctx.guild.id}_dice_rolls"]["min_rolls"] += 1
-                  if ctx.message.author.name in players:
-                    db[f"{ctx.guild.id}_dice_hundred_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
-                    db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
-                # Seperation for readability
+                add_d100_highlow_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], int(dice_roll), ctx.message.author.name, db[f"{ctx.guild.id}_dice_hundred_rolls"])
                 if len(diceresults) > 1 and counter != len(diceresults):
                     brackets += f"**{dice_roll}**, "
                 else:
@@ -193,18 +188,8 @@ async def rr(ctx, time: int, dice: str, opt="normal"):
           brackets += ")"
           send_message += f"\n1d{dice_nr} {brackets} {modifiers} = {result.total}"
       else:
-        if min(1, int(dice_nr)) == int(result):
-          db[f"{ctx.guild.id}_dice_rolls"]["min_rolls"] += 1
-          if ctx.message.author.name in players:
-            db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["low_ended_rolls"] += 1
-        elif max(1, int(dice_nr)) == int(result):
-          db[f"{ctx.guild.id}_dice_rolls"]["max_rolls"] += 1
-          if ctx.message.author.name in players:
-            db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["high_ended_rolls"] += 1
-        else:
-          db[f"{ctx.guild.id}_dice_rolls"]["total_rolls"] += 1
-          if ctx.message.author.name in players:
-            db[f"{ctx.guild.id}_dice_rolls"]["players"][ctx.message.author.name]["total_rolls"] += 1
+        add_highlow_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], int(result), int(dice_nr), ctx.message.author.name)
+        add_total_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], ctx.message.author.name)
         send_message += f"\n{formatted}"
       total_roll += result.total
   send_message += f"\n{total_roll} total"
