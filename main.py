@@ -59,7 +59,7 @@ async def on_ready():
 #     else:
 #       await ctx.send(ctx.message.author.mention+"\nThat weapon does not exist in my database.")
 
-
+#34, 4.5
 
 #!!  Things to work on !!
 #!!  * Create a message constructor so the command r simply goes through the list of results and prints the message accordingly
@@ -75,24 +75,23 @@ async def r(ctx, input: str):
   logger.debug(db[f"{ctx.guild.id}_dice_hundred_rolls"])
   if results_from_logic["dice_size"] == 100:
     add_total_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], ctx.message.author.name, db[f"{ctx.guild.id}_dice_hundred_rolls"])
-    brackets = "("
+    dice_results = ""
     for dice_roll in results_from_logic["dice_results"]:
       add_d100_highlow_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], dice_roll, ctx.message.author.name, db[f"{ctx.guild.id}_dice_hundred_rolls"])
       if int(dice_roll) >= 96 or int(dice_roll) <= 5:
         if len(results_from_logic["dice_results"]) > 1:
-            brackets += f"**{dice_roll}**, "
+            dice_results += f"**{dice_roll}**, "
         else:
-            brackets += f"**{dice_roll}**"
+            dice_results += f"**{dice_roll}**"
       else:
         if len(results_from_logic["dice_results"]) > 1:
-            brackets += f"{dice_roll}, "
+            dice_results += f"{dice_roll}, "
         else:
-            brackets += f"{dice_roll}"
-    brackets += ")"
+            dice_results += f"{dice_roll}"
     if results_from_logic["modifiers"]:
-      await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} {brackets} {results_from_logic['modifiers']}\n**Total:** {results_from_logic['roll_total']}")
+      await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} ({dice_results}) {results_from_logic['modifiers']}\n**Total:** {results_from_logic['roll_total']}")
     else:
-      await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} {brackets}\n**Total:** {results_from_logic['roll_total']}")
+      await ctx.send(ctx.message.author.mention+f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} ({dice_results})\n**Total:** {results_from_logic['roll_total']}")
   else:
     for dice_roll in results_from_logic["dice_results"]:
       add_highlow_rolls_to_database(db[f"{ctx.guild.id}_dice_rolls"], dice_roll, results_from_logic["dice_size"], ctx.message.author.name)

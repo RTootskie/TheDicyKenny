@@ -58,6 +58,7 @@ def dice_bot_logic(user_string: str):
         first_modifier = None
         should_take_away = None
         dice_modifiers_string = None
+        error_message = None
         total_modifier_sum = 0
 
         # Did they want multiple dice?
@@ -140,6 +141,7 @@ def dice_bot_logic(user_string: str):
             "modifiers": dice_modifiers_string,
             "modifier_total": total_modifier_sum,
             "roll_total": roll_total,
+            "error_message": error_message
         }
 
         return program_returns
