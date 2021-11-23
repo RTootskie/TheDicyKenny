@@ -38,6 +38,8 @@ class DiceData(commands.Cog):
           message += f"\t\t*Total rolls*: {player_total_rolls}\n\t\t*High rolls*: {player_high_ended}\n\t\t*Low rolls*: {player_low_ended}\n"
         else:
           message = "That player does not exist in our database."
+      
+      await ctx.send(ctx.message.author.mention +f"\n{message}")
     
 
 
@@ -45,8 +47,8 @@ class DiceData(commands.Cog):
     async def _alldice(self, ctx, target="None"):
       """Gives you an overview of the dice rolls inside the database. Usage: *statistics [None,All,Specific Player] Will need to use Discord name. None- Global results, All- Global and Players, Specifc Player - Only the player's results"""
       total_rolls = db[f"{ctx.guild.id}_dice_rolls"]["total_rolls"]
-      high_ended = db[f"{ctx.guild.id}_dice_rolls"]["high_ended_rolls"]
-      low_ended = db[f"{ctx.guild.id}_dice_rolls"]["high_ended_rolls"]
+      high_ended = db[f"{ctx.guild.id}_dice_rolls"]["max_rolls"]
+      low_ended = db[f"{ctx.guild.id}_dice_rolls"]["min_rolls"]
 
       if target == "None":
         message = f"You have all rolled a total of **{total_rolls}** dice.\nYou have all rolled a total of **{high_ended}** high results.\nYou have all rolled a total of **{low_ended}** minimum results.\n"
