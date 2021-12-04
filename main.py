@@ -5,8 +5,6 @@ import logging
 
 from replit import db
 from discord.ext import commands
-#from random import choice, randint
-#from itertools import cycle
 
 # Custom imports
 from resources.dice_functions import dice_bot_logic

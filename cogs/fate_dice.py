@@ -1,16 +1,6 @@
-import os
-import d20
-import discord
-import logging
-
-from replit import db
 from discord.ext import commands
-from random import choice, randint
-from itertools import cycle
+from random import randint
 
-# Theres a set of 4 dice, 2 sides are blank, 2 have a minus, 2 have a plus
-# [-] [+] [ ]
-# +8 Legendary +7 epic +6 Fantastic +5 Superb +4 great +3 good +2 Fair +1 average +0 mediocre
 class FateDice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -48,7 +38,6 @@ class FateDice(commands.Cog):
       }
       for dice in range(1, 5):
         roll_results.append(randint(1,6))
-      # print(roll_results)
 
       roll_total = 0
       fate_roll_results = ""
@@ -73,13 +62,13 @@ class FateDice(commands.Cog):
           split_modifier = modifier.split("+")
           correct_value = split_modifier[1]
           modified_roll_total = roll_total + int(correct_value)
-      # print(fate_roll_results)
-      # print(roll_total)
-      # print(f"The result was {fate_ladder[roll_total]} ({roll_total})")
-      if modified_roll_total < -7:
-        modified_roll_total = -7
-      elif modified_roll_total > 12 and modified_roll_total != 15:
-        modified_roll_total = 12
+
+      if modifier:
+        if modified_roll_total < -7:
+          modified_roll_total = -7
+        elif modified_roll_total > 12 and modified_roll_total != 15:
+          modified_roll_total = 12
+
       if not modifier:
         await ctx.send(ctx.message.author.mention + f"\nYou got **{fate_ladder[roll_total]}** ({roll_total})\nYou rolled: {fate_roll_results}")
       else:
@@ -90,5 +79,3 @@ class FateDice(commands.Cog):
 
 def setup(bot):
     bot.add_cog(FateDice(bot))
-
-#[1,2,3,4,5,6]
