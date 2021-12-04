@@ -7,6 +7,7 @@ handler = logging.FileHandler(filename='./logs/dice_rolls.log', encoding='utf-8'
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
+
 # Necessary for initialization of database key
 
 def calculate_modifiers(modifiers: list):
@@ -32,14 +33,16 @@ def calculate_modifiers(modifiers: list):
                 logger.warning("You wrote something wrong, recheck my result.")
     return modifier_total
 
+
 def rolling_dice(size_of_dice, times_to_roll=1):
     """Insert the amount of times you need to roll a certain dice"""
     dice_roller_results = []
     while times_to_roll > 0:
-      dice_roll = randint(1, size_of_dice)
-      dice_roller_results.append(dice_roll)
-      times_to_roll -= 1
+        dice_roll = randint(1, size_of_dice)
+        dice_roller_results.append(dice_roll)
+        times_to_roll -= 1
     return dice_roller_results
+
 
 def dice_bot_logic(user_string: str):
     """Roll your dice with the syntax of [num_dice]d[dice_sides][modifiers]"""
@@ -115,10 +118,10 @@ def dice_bot_logic(user_string: str):
             logger.debug(rolled_results)
             roll_total = 0
             for i in rolled_results:
-              logger.debug(f"Rolled {i}")
-              roll_total += i
+                logger.debug(f"Rolled {i}")
+                roll_total += i
             if first_modifier:
-              roll_total += total_modifier_sum
+                roll_total += total_modifier_sum
 
         if pre_modifier:
             if should_take_away:
@@ -130,7 +133,7 @@ def dice_bot_logic(user_string: str):
             logger.info(f"You rolled a total of: {roll_total}")
 
         if not dice_num:
-          dice_num = 1
+            dice_num = 1
 
         program_returns = {
             "pre_modifier": pre_modifier,
