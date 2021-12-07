@@ -46,33 +46,58 @@ async def on_ready():
 
 
 def determine_dice_degree(dice_roll, size_of_dice):
-    """Use the switch case logic in Python 3.10 to computer faster than if-else ladder"""
+    """ Use below code when working with Python 3.10, else the code below"""
+    # if determine_d100(size_of_dice):
+    #     match dice_roll:
+    #         case dice_roll if dice_roll in range(96, 101):
+    #             logger.info("High open ender")
+    #             return [1, 2]
+    #         case dice_roll if dice_roll in range(60, 96):
+    #             logger.info("High roll")
+    #             return [2]
+    #         case dice_roll if dice_roll in range(6, 41):
+    #             logger.info("Low roll")
+    #             return [3]
+    #         case dice_roll if dice_roll in range(1, 6):
+    #             logger.info("Low open ender")
+    #             return [3, 4]
+    #         case _:
+    #             logger.error("There was an error in the logic")
+    # else:
+    #     match dice_roll:
+    #         case dice_roll if dice_roll == int(size_of_dice):
+    #             logger.info("Highest roll")
+    #             return [1]
+    #         case dice_roll if dice_roll == 1:
+    #             logger.info("Lowest roll")
+    #             return [4]
+    #         case _:
+    #             logger.error("There was an error in the logic")
+
     if determine_d100(size_of_dice):
-        match dice_roll:
-            case dice_roll if dice_roll in range(96, 101):
-                logger.info("High open ender")
-                return [1, 2]
-            case dice_roll if dice_roll in range(60, 96):
-                logger.info("High roll")
-                return [2]
-            case dice_roll if dice_roll in range(6, 41):
-                logger.info("Low roll")
-                return [3]
-            case dice_roll if dice_roll in range(1, 6):
-                logger.info("Low open ender")
-                return [3, 4]
-            case _:
-                logger.error("There was an error in the logic")
+        if dice_roll in range(96, 101):
+            logger.info("High open ender")
+            return [1, 2]
+        elif dice_roll in range(60, 96):
+            logger.info("High roll")
+            return [2]
+        elif dice_roll in range(6, 41):
+            logger.info("Low roll")
+            return [3]
+        elif dice_roll in range(1, 6):
+            logger.info("Low open ender")
+            return [3, 4]
+        else:
+            logger.error("There was an error in the logic")
     else:
-        match dice_roll:
-            case dice_roll if dice_roll == int(size_of_dice):
-                logger.info("Highest roll")
-                return [1]
-            case dice_roll if dice_roll == 1:
-                logger.info("Lowest roll")
-                return [4]
-            case _:
-                logger.error("There was an error in the logic")
+        if dice_roll == int(size_of_dice):
+            logger.info("Highest roll")
+            return [1]
+        elif dice_roll == 1:
+            logger.info("Lowest roll")
+            return [4]
+        else:
+            logger.error("There was an error in the logic")
 
 
 def add_entries_to_database(dice_roll, size_of_dice, author):
