@@ -1,6 +1,5 @@
 import logging
 import pandas as pd
-import numpy as np
 
 from replit import db
 from resources.players import players, main_game

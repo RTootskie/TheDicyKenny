@@ -15,7 +15,7 @@ handler = logging.FileHandler(filename='./logs/discord.log',
                               encoding='utf-8',
                               mode='w')
 handler.setFormatter(
-logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+    logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
 intents = discord.Intents.default()
@@ -44,50 +44,58 @@ async def on_ready():
 # TODO Create a new functionality for the dice logic to roll an iteration and add bonuses to each rolls
 # TODO Make sure that if a modifier has another D then you can roll again.
 
+
+def determine_dice_degree(dice_roll, size_of_dice):
+    """Use the switch case logic in Python 3.10 to computer faster than if-else ladder"""
+    if determine_d100(size_of_dice):
+        match dice_roll:
+            case dice_roll if dice_roll in range(96, 101):
+                logger.info("High open ender")
+                return [1, 2]
+            case dice_roll if dice_roll in range(60, 96):
+                logger.info("High roll")
+                return [2]
+            case dice_roll if dice_roll in range(6, 41):
+                logger.info("Low roll")
+                return [3]
+            case dice_roll if dice_roll in range(1, 6):
+                logger.info("Low open ender")
+                return [3, 4]
+            case _:
+                logger.error("There was an error in the logic")
+    else:
+        match dice_roll:
+            case dice_roll if dice_roll == int(size_of_dice):
+                logger.info("Highest roll")
+                return [1]
+            case dice_roll if dice_roll == 1:
+                logger.info("Lowest roll")
+                return [4]
+            case _:
+                logger.error("There was an error in the logic")
+
+
 def add_entries_to_database(dice_roll, size_of_dice, author):
-  db["all_dicy_data"]["Dicy_Data"][0] += 1
-  if author in players:
-    db["all_dicy_data"][author][0] += 1
+    """Determine the correct position for new entries and add them to the replit database"""
+    # db["all_dicy_data"]["Dicy_Data"][0] += 1
+    # if author in players:
+    #     db["all_dicy_data"][author][0] += 1
 
-  #or dice_roll == max(1, size_of_dice)
-  #or dice_roll == min(1, size_of_dice)
-
-  if determine_d100(size_of_dice):
-    # Add to High Roll and > 60 Roll
-    if dice_roll > 95:
-        db["all_dicy_data"]["Dicy_Data"][1,2] += 1
-        if author in players:
-          db["all_dicy_data"][author][1,2] += 1
-    # Add to > 60 Roll        
-    elif dice_roll >= 60:
-      db["all_dicy_data"]["Dicy_Data"][2] += 1
-      if author in players:
-        db["all_dicy_data"][author][2] += 1
-    # Add to <40 Roll
-    elif dice_roll <= 40:
-      db["all_dicy_data"]["Dicy_Data"][3] += 1
-      if author in players:
-        db["all_dicy_data"][author][3] += 1
-    # Add to Low Roll and <40 Roll
-    elif dice_roll < 6:
-      db["all_dicy_data"]["Dicy_Data"][3,4] += 1
-      if author in players:
-        db["all_dicy_data"][author][3,4] += 1
-
-  else:
-    if dice_roll == max(1, size_of_dice):
-      db["all_dicy_data"]["Dicy_Data"][1] += 1
-      if author in players:
-        db["all_dicy_data"][author][1] += 1
-    elif dice_roll == min(1, size_of_dice):
-      db["all_dicy_data"]["Dicy_Data"][4] += 1
-      if author in players:
-        db["all_dicy_data"][author][4] += 1
+    dice_result = determine_dice_degree(dice_roll, size_of_dice)
+    print(dice_result)
+    if dice_result:
+        print("Will add to database")
+        # db["all_dicy_data"]["Dicy_Data"][dice_result] += 1
+        # if author in players:
+        #     db["all_dicy_data"][author][dice_result] += 1
+    else:
+        print("Skipped")
 
 
 def determine_d100(size_of_dice):
     """Takes the input dice and returns true or false"""
     return int(size_of_dice) == 100
+
 
 # DB Structure
 """
@@ -97,25 +105,26 @@ db["all_dicy_data"] = {
 } # Total Rolls - High Rolls - >60 Rolls - <40 Rolls - Low Rolls 
 """
 
+
 def dice_are_open_ender(size_of_dice, list_of_dice, author):
     """Receive a list of dice results and decide how they should be formatted."""
     message_variable = ""
     dice_iterator = 0
     for roll_result in list_of_dice:
-      add_entries_to_database(roll_result, size_of_dice, author)
-      
-      dice_iterator += 1
-      if determine_d100(size_of_dice):  # Are D100s being rolled
-          if int(roll_result) > 95 or int(roll_result) < 6:
-              roll_result = f"**{roll_result}**"
-      else:
-          if int(roll_result) == min(1, size_of_dice) or int(roll_result) == max(1, size_of_dice):
-              roll_result = f"**{roll_result}**"
+        add_entries_to_database(roll_result, size_of_dice, author)
 
-      if int(dice_iterator) == len(list_of_dice):
-          message_variable += f"{roll_result}"
-      else:
-          message_variable += f"{roll_result}, "
+        dice_iterator += 1
+        if determine_d100(size_of_dice):  # Are D100s being rolled
+            if int(roll_result) > 95 or int(roll_result) < 6:
+                roll_result = f"**{roll_result}**"
+        else:
+            if int(roll_result) == min(1, size_of_dice) or int(roll_result) == max(1, size_of_dice):
+                roll_result = f"**{roll_result}**"
+
+        if int(dice_iterator) == len(list_of_dice):
+            message_variable += f"{roll_result}"
+        else:
+            message_variable += f"{roll_result}, "
 
     return message_variable
 
