@@ -16,6 +16,7 @@ players = [
 
 
 main_game = [
+	"Dicy_Data",
   "Axxonet",
   "Capitan_Scythe",
   "Gnasher",
