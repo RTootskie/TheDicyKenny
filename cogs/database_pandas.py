@@ -10,7 +10,12 @@ from discord.ext import commands
 """
 db["all_dicy_data"] = {
   "Dicy_Data": [0,0,0,0,0],
-  "temp_account": [0,0,0,0,0],
+  "Ashen": [0,0,0,0,0],
+  "Capitan_Scythe": [0,0,0,0,0],
+  "Gnasher": [0,0,0,0,0],
+  "KennyJohn": [0,0,0,0,0],
+  "Sancronis": [0,0,0,0,0],
+  "Vidavian: [0,0,0,0,0]"
 } # Total Rolls - High Rolls - >60 Rolls - Low Rolls <40 Rolls
 """
 # DB Keys

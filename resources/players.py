@@ -2,7 +2,7 @@ players = [
   "Gnasher",
   "KennyJohn",
   "Sancronis",
-  "Axxonet",
+  "Ashen",
   "Vidavian",
   "Saint Chicken",
   "Capitan_Scythe",
@@ -17,7 +17,7 @@ players = [
 
 main_game = [
 	"Dicy_Data",
-  "Axxonet",
+  "Ashen",
   "Capitan_Scythe",
   "Gnasher",
   "KennyJohn",

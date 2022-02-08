@@ -14,8 +14,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='./logs/discord.log',
                               encoding='utf-8',
                               mode='w')
-handler.setFormatter(
-    logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
 intents = discord.Intents.default()
@@ -32,10 +31,9 @@ for filename in os.listdir('./cogs'):
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
-    print('------')
-    await bot.change_presence(activity=discord.Activity(
-        type=discord.ActivityType.watching, name="existing in 5 space time continuum's!"))
+	print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+	print('------')
+	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="everyone having a jolly christmas!"))
 
 @bot.event
 async def on_message(message):
@@ -45,18 +43,15 @@ async def on_message(message):
 		if "bad" in message.content.lower():
 			await message.channel.send(
 																message.author.mention+
-																"\nI'm sorry, I've been a baaaaaaaaaaaaad bot. :smiling_imp: "
-																)
+																"\nI'm sorry, I've been a baaaaaaaaaaaaad bot. :smiling_imp: ")
 		elif "good" in message.content.lower():
 			await message.channel.send(
 																message.author.mention+
-																"\nThank you for the compliment! :blush:"
-																)
+																"\nThank you for the compliment! :blush:")
 		else:
 			await message.channel.send(
 																message.author.mention+
-																"\nI'm sorry, I haven't been programmed to be that self-aware yet."
-																)
+																"\nI'm sorry, I haven't been programmed to be that self-aware yet.")
 		
 	await bot.process_commands(message)
 
@@ -66,7 +61,6 @@ async def on_message(message):
 # TODO Feature to respond when they are mentioned
 
 def determine_dice_degree(dice_roll, size_of_dice):
-	""" Use below code when working with Python 3.10, else the code below"""
 	if determine_d100(size_of_dice):
 		if dice_roll in range(96, 101):
 			logger.info("High open ender")
@@ -134,23 +128,24 @@ def dice_are_open_ender(size_of_dice, list_of_dice, author):
 	dice_iterator = 0
 	for roll_result in list_of_dice:
 
+		if author in db["all_dicy_data"]:
 			try:
 				add_entries_to_database(roll_result, size_of_dice, author)
 			except discord.ext.commands.errors.CommandInvokeError:
 				print("Error")
 
-			dice_iterator += 1
-			if determine_d100(size_of_dice):  # Are D100s being rolled
-					if int(roll_result) > 95 or int(roll_result) < 6:
-							roll_result = f"**{roll_result}**"
-			else:
-					if int(roll_result) == min(1, size_of_dice) or int(roll_result) == max(1, size_of_dice):
-							roll_result = f"**{roll_result}**"
+		dice_iterator += 1
+		if determine_d100(size_of_dice):  # Are D100s being rolled
+				if int(roll_result) > 95 or int(roll_result) < 6:
+						roll_result = f"**{roll_result}**"
+		else:
+				if int(roll_result) == min(1, size_of_dice) or int(roll_result) == max(1, size_of_dice):
+						roll_result = f"**{roll_result}**"
 
-			if int(dice_iterator) == len(list_of_dice):
-					message_variable += f"{roll_result}"
-			else:
-					message_variable += f"{roll_result}, "
+		if int(dice_iterator) == len(list_of_dice):
+				message_variable += f"{roll_result}"
+		else:
+				message_variable += f"{roll_result}, "
 
 	return message_variable
 
@@ -164,17 +159,17 @@ async def r(ctx, user_dice_string: str):
 																			ctx.message.author.name)
 
 	if results_from_logic["modifiers"]:
-			await ctx.send(
-					ctx.message.author.mention +
-					f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} "
-					+ f"({dice_results}) {results_from_logic['modifiers']}\n" +
-					f"**Total:** {results_from_logic['roll_total']}")
+		await ctx.send(
+			ctx.message.author.mention +
+			f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} "
+			+ f"({dice_results}) {results_from_logic['modifiers']}\n" +
+			f"**Total:** {results_from_logic['roll_total']}")
 	else:
-			await ctx.send(
-					ctx.message.author.mention +
-					f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} "
-					+ f"({dice_results})\n" +
-					f"**Total:** {results_from_logic['roll_total']}")
+		await ctx.send(
+			ctx.message.author.mention +
+			f"\n**Rolled:** {results_from_logic['dice_num']}d{results_from_logic['dice_size']} "
+			+ f"({dice_results})\n" +
+			f"**Total:** {results_from_logic['roll_total']}")
 
 
 @bot.command(aliases=["RR"])
