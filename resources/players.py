@@ -19,7 +19,6 @@ main_game = [
 	"Dicy_Data",
   "Ashen",
   "Capitan_Scythe",
-  "Gnasher",
   "KennyJohn",
   "Sancronis",
   "Vidavian"

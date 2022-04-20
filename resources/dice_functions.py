@@ -1,12 +1,4 @@
 from random import randint
-import logging
-
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='./logs/dice_rolls.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
-
 
 # Necessary for initialization of database key
 
@@ -25,12 +17,12 @@ def calculate_modifiers(modifiers: list):
                         try:
                             modifier_total -= int(negativeModifier)
                         except ValueError:
-                            logger.warning("You wrote something wrong, recheck my result.")
+                            print("Something wrong in dice rolling modifier")
                 continue  # Restart the loop so you don't error
             try:
                 modifier_total += int(bonusModifier)
             except ValueError:
-                logger.warning("You wrote something wrong, recheck my result.")
+                print("Something wrong in dice rolling modifier")
     return modifier_total
 
 
@@ -46,13 +38,9 @@ def rolling_dice(size_of_dice, times_to_roll=1):
 
 def dice_bot_logic(user_string: str):
     """Roll your dice with the syntax of [num_dice]d[dice_sides][modifiers]"""
-    logger.info(f"The person just input: {user_string}")
-    # Has the user inserted correct syntax
-
     if 'd' in user_string:
         # Establish initial split of dice
         split_dice = user_string.split("d")
-        logger.info(split_dice)
         dice_size_and_modifiers = split_dice[1]
 
         # Declare some values that are used for checks if they are filled
@@ -98,27 +86,21 @@ def dice_bot_logic(user_string: str):
             dice_modifiers_string = str(first_modifier + dice_size_amt_split[1])
             loop_modifiers = dice_modifiers_string.split("+")
             total_modifier_sum = calculate_modifiers(loop_modifiers)
-            logger.debug(f"Total Bonus: {total_modifier_sum}")  # Good for logging
             # capabilities
         else:
             dice_size = int(split_dice[1])
 
         if dice_num:  # If dice_num exists
-            logger.debug(dice_num)
             rolled_results = rolling_dice(dice_size, dice_num)
-            logger.debug(rolled_results)
             roll_total = 0
             for i in rolled_results:
-                logger.debug(f"Rolled {i}")
                 roll_total += i
             if first_modifier:
                 roll_total += total_modifier_sum
         else:
             rolled_results = rolling_dice(dice_size)
-            logger.debug(rolled_results)
             roll_total = 0
             for i in rolled_results:
-                logger.debug(f"Rolled {i}")
                 roll_total += i
             if first_modifier:
                 roll_total += total_modifier_sum
@@ -128,9 +110,9 @@ def dice_bot_logic(user_string: str):
                 roll_total = pre_modifier - roll_total
             else:
                 roll_total += pre_modifier
-            logger.info(f"You rolled a total of: {roll_total}")
+            print(f"Rolled total: {roll_total}")
         else:
-            logger.info(f"You rolled a total of: {roll_total}")
+            print(f"Rolled total: {roll_total}")
 
         if not dice_num:
             dice_num = 1
@@ -149,4 +131,4 @@ def dice_bot_logic(user_string: str):
 
         return program_returns
     else:
-        logger.warning("You didn't put a D")
+        print("Didn't put a D")

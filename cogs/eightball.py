@@ -1,11 +1,6 @@
 from random import choice
 from discord.ext import commands
 
-# intents = discord.Intents.default()
-# intents.members = True
-# description = '''A Kenny that handles all your dice needs.'''
-
-# bot = commands.Bot(command_prefix='*', description=description, intents=intents)
 class EightBall(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
