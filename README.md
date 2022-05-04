@@ -2,7 +2,7 @@
 The Dice Rolling project
 
 # Required
-`Python >3.9`  
+`Python >= 3.9`  
 `Debian/Ubuntu`
 
 
