@@ -26,7 +26,7 @@ for filename in os.listdir('./cogs'):
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="They can't take our freedom!"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="no comas this week."))
 
 
 @bot.event
