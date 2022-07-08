@@ -4,6 +4,7 @@ import logging
 import json
 import itertools
 
+from random import randint
 from discord.ext import commands
 
 # Custom imports
@@ -145,6 +146,25 @@ def dice_are_open_ender(size_of_dice, list_of_dice, author):
 
     return message_variable
 
+
+@bot.command(aliases=["Real"])
+async def real(ctx):
+    """Rolls 2d10 as you would in real life."""
+    first_dice = randint(0,9)
+    sec_dice = randint(0,9)
+
+    if first_dice == 0:
+        if sec_dice == 0:
+            total_result = "**100**"
+        else:
+            total_result = "**0"+str(sec_dice)+"**"
+    else:
+        total_result = "**"+str(first_dice)+str(sec_dice)+"**"
+
+    await ctx.send(
+            ctx.message.author.mention +
+            f"\n**You rolled the dice:** `{str(first_dice)}` and `{str(sec_dice)}`\n"
+            +f"This means you rolled: ({str(total_result)})\n")
 
 @bot.command(aliases=["R"])
 async def r(ctx, user_dice_string: str):
