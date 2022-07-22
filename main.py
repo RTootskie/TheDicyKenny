@@ -27,7 +27,7 @@ for filename in os.listdir('./cogs'):
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="no comas this week."))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Tapasya resting while others fight."))
 
 
 @bot.event
@@ -148,23 +148,43 @@ def dice_are_open_ender(size_of_dice, list_of_dice, author):
 
 
 @bot.command(aliases=["Real"])
-async def real(ctx):
+async def real(ctx, modifier=None):
     """Rolls 2d10 as you would in real life."""
     first_dice = randint(0,9)
     sec_dice = randint(0,9)
 
     if first_dice == 0:
         if sec_dice == 0:
-            total_result = "**100**"
+            result = "100"
         else:
-            total_result = "**0"+str(sec_dice)+"**"
+            result = "0"+str(sec_dice)
     else:
-        total_result = "**"+str(first_dice)+str(sec_dice)+"**"
+        result = str(first_dice)+str(sec_dice)
 
-    await ctx.send(
+    result = int(result) # Turn the result to int type
+
+    if modifier:
+        if "-" in modifier:
+            total_mod = int(modifier.split("-")[1])
+            had_modifier = "-"
+            total_result = result-total_mod
+        elif "+" in modifier:
+            total_mod = int(modifier.split("+")[1])
+            had_modifier = "+"
+            total_result = result+total_mod
+
+    if modifier:
+        await ctx.send(
+                ctx.message.author.mention +
+                f"\n**You rolled the dice:** `{str(first_dice)}` and `{str(sec_dice)}`\n"
+                +f"This means you rolled: (**{str(result)}**{str(had_modifier)}{str(total_mod)})\n"
+                +f"Total: **{str(total_result)}**")
+    else:
+        await ctx.send(
             ctx.message.author.mention +
             f"\n**You rolled the dice:** `{str(first_dice)}` and `{str(sec_dice)}`\n"
-            +f"This means you rolled: ({str(total_result)})\n")
+            +f"This means you rolled: (**{str(result)}**)\n"
+            +f"Total: **{str(result)}**")
 
 @bot.command(aliases=["R"])
 async def r(ctx, user_dice_string: str):
